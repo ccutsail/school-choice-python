@@ -1,3 +1,7 @@
+import networkx as nx
+
+import matplotlib.pyplot as plt
+
 class Student(object):
    def __init__(self, id, prefList):
       self.prefList = prefList
@@ -73,5 +77,51 @@ for school in num_schools:
     schools.append(School(school,numpy.random.choice(stud_list, size = len(stud_list),replace=False),len(stud_list)))
 stableMarriage(students,schools)
 
-schools[1].capacity = 3
-schools[1].capacity = 3
+student_list = []
+
+for k in stud_list:
+    sk = "S" + str(k)
+    student_list[len(student_list):] = [sk]
+
+G = nx.Graph()
+G2 = nx.MultiDiGraph()
+G.add_nodes_from ( student_list,bipartite = 0)
+G.add_nodes_from ( num_schools,bipartite = 1)
+
+G2.add_nodes_from ( student_list )
+G2.add_nodes_from ( num_schools )
+
+
+for k in stud_list:
+    G.add_edge(student_list[k],stableMarriage(students,schools)[k])
+
+for k in stud_list:
+    G2.add_edge(student_list[k],students[k].prefList[0])
+    
+### Positioning doesn't work properly in NetworkX. 
+### Use Sage for visualization. Script is almost identical -- 
+### Just copy and paste, get rid of reading and writing
+    
+    
+l = student_list
+r = num_schools
+pos = {}
+
+# UpG2.add_nodes_from ( stud_list,bipartite = 0)date position for node from each group
+pos.update((node, (1, index)) for index, node in enumerate(l))
+pos.update((node, (2, index)) for index, node in enumerate(r))
+# pos = nx.spring_layout(G,k=0.15,iterations=20)
+nx.write_graphml(G,"/Users/corycutsail/Desktop/Summer 16/matching/simulassignment.graphml")
+G = nx.read_graphml("/Users/corycutsail/Desktop/Summer 16/matching/simulassignment.graphml")
+
+nx.write_graphml(G2,"/Users/corycutsail/Desktop/Summer 16/matching/preTTC.graphml")
+G2 = nx.read_graphml("/Users/corycutsail/Desktop/Summer 16/matching/preTTC.graphml")
+
+plt.figure(1)
+nx.draw(G,with_labels=True,node_color='white')
+plt.show()
+
+plt.figure(2)
+nx.draw(G2,with_labels=True,node_color='white')
+plt.show()
+
